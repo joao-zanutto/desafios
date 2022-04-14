@@ -18,7 +18,6 @@ resource "aws_ecs_task_definition" "metabase_task_definition" {
   family                   = "metabase-td"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = var.ecs_execution_role_arn
   cpu                      = 512
   memory                   = 2048
   container_definitions = jsonencode([
@@ -26,15 +25,6 @@ resource "aws_ecs_task_definition" "metabase_task_definition" {
       name      = "${var.container_name}"
       image     = "${var.image}"
       essential = true
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = "metabase-ecs-logs",
-          awslogs-region        = "us-west-2",
-          awslogs-create-group  = "true",
-          awslogs-stream-prefix = "ecs"
-        }
-      }
       portMappings = [
         {
           containerPort = "${tonumber(var.container_port)}"

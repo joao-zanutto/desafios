@@ -4,6 +4,16 @@ Nesse repositório está contido código terraform para resolver o problema prop
 
 Essa atividade foi realizada usando recursos do AWS no terraform sem o uso de módulos, tanto para demonstrar o conhecimento das peças de infraestrutura da AWS quanto para realizar a atividade de forma extensa permitindo a apresentação de código funcional.
 
+## Execução
+
+Instalar Terraform 1.1.8
+
+Para executar o código e gerar a infraestrutura na AWS:
+
+- `terraform init` para instalar as dependencias do provider
+- `terraform plan` para gerar o plano de modificações a serem aplicadas
+- `terraform apply` para aplicar as modificações 
+
 ## Design da infraestrutura
 
 ![Metabase Architecture](https://user-images.githubusercontent.com/11475695/163426580-a8e6a6dd-ad87-4a11-a407-c68fba716e74.png)

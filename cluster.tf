@@ -82,9 +82,9 @@ resource "aws_ecs_service" "metabase_service" {
   desired_count   = 1
 
   network_configuration {
-    subnets          = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
+    subnets          = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
     security_groups  = [aws_security_group.ecs_security_group.id]
-    assign_public_ip = true
+    assign_public_ip = false
   }
 
   load_balancer {

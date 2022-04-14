@@ -1,46 +1,27 @@
-# Desafios QR Capital
+# Desafio DevOps - QR Capital
 
-Primeiramente, obrigado pelo seu interesse em trabalhar na melhor empresa de blockchain do Brasil! (em breve, do mundo).
+Nesse repositório está contido código terraform para resolver o problema proposto no desafio de DevOps da QR Capital
 
-Abaixo você encontrará todos as informações necessárias para iniciar o seu teste.
+Essa atividade foi realizada usando recursos do AWS no terraform sem o uso de módulos, tanto para demonstrar o conhecimento das peças de infraestrutura da AWS quanto para realizar a atividade de forma extensa permitindo a apresentação de código funcional.
 
-## Avisos antes de começar
+## Design da infraestrutura
 
-- Escolha um dos desafios disponíveis.
-- Siga as instruções do desafio escolhido.
-- O prazo para cada desafio é uma semana. 
-- Após finalizar, encaminhe um email para <showmecode@qr.capital> indicando qual é o seu repositório.
-- Você poderá consultar o Google, Stackoverflow ou algum projeto particular na sua máquina.
-- Fique à vontade para perguntar qualquer dúvida sobre os desafios.
-- Fique tranquilo, respire, assim como você, também já passamos por essa etapa. Boa sorte! :)
+![Metabase Architecture](https://user-images.githubusercontent.com/11475695/163426580-a8e6a6dd-ad87-4a11-a407-c68fba716e74.png)
 
-*Corpo do Email com o link do repositório do desafio*
+Na arquitetura apresentada acima, temos uma aplicação dividida em três camadas:
+- Dados
+- Aplicação
+- LoadBalancer
 
->Seu Nome
->
->Link do repositório
->
->Link do Linkedin
+O fluxo de dados de entrada na aplicação só ocorre por meio do Load Balancer, sendo que a task no ECS não possuí um endereço de IP público, sendo assim, essa não pode ser acessada diretamente.
 
-### Sobre o ambiente da aplicação:
+Como o ECS precisa de acesso a internet para fazer o download da imagem no DockerHub e a aplicação `Metabase` também precisará de acesso externo para buscar dados de alguma base de dados externa para executar sua tarefa, foi criado um NAT Gateway, que permite que os elementos de nossa arquitetura se conectem à internet sem se expor, por meio de uma tradução de endereçamento IP (NAT).
 
-- Escolha qualquer framework que se sinta **confortável** em trabalhar. Esse teste **não faz** nenhuma preferência, portanto decida por aquele com o qual estará mais seguro em apresentar e conversar com a gente na entrevista.
+**OBS:** Em caso de uma aplicação em produção, a imagem docker seria hospedada no AWS ECR e as possíveis bases de dados que o Metabase acessaria estariam dentro da própria rede, fazendo assim com que não seja necessário conectar a aplicação na internet (mitigando assim qualquer risco por deixar a aplicação aberta)
 
-- Você pode, inclusive, não optar por framework nenhum. Neste caso, recomendamos um maior planejamento para sua entrega.
+## Considerações sobre a arquitetura
 
-- Ainda assim, se optar por um framework tente evitar usar muito métodos mágicos ou atalhos já prontos. Queremos conhecer o teu código.
-
-A correção qualitativa será durante a entrevista e levará em conta os seguintes critérios:
-
-## O que será avaliado e valorizado
-- Documentação
-- Se for para vaga sênior, foque bastante no **desenho de arquitetura**
-- Código limpo e organizado (nomenclatura, etc)
-- Conhecimento de padrões (PSRs, design patterns, SOLID)
-- Ser consistente e saber argumentar suas escolhas
-- Arquitetura (estruturar o pensamento antes de escrever)
-- Carinho em desacoplar componentes (outras camadas, service, repository)
-
-De acordo com os critérios acima, iremos avaliar seu teste para avançarmos para a entrevista técnica.
-
-Obrigado!!!
+Foram utilizados recursos de forma economica na AWS de forma a caber o máximo possível no `Free Tier` e assim ter-se o minímo custo possível com a execução dessa atividade, por conta disso nota-se alguns pontos que seriam importantes para garantir a escalabilidade da arquitetura proposta, como:
+- Número maior de tasks em execução (`1`)
+- Criação de uma replica do banco de dados em outro AZ (caso seja necessário downtime próximo de 0 no caso de uma eventual catástrofe)
+- Maior número de AZs cobertas para alta disponibilidade

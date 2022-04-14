@@ -8,6 +8,17 @@ Essa atividade foi realizada usando recursos do AWS no terraform sem o uso de m�
 
 Instalar Terraform 1.1.8
 
+Adicionar um arquivo `terraform.tfvars` com o conteúdo das variáveis na raíz do projeto. Segue um exemplo de conteúdo:
+
+```
+db_username            = "postgres"
+db_password            = "postgres"
+container_name         = "metabase"
+image                  = "metabase/metabase:latest"
+container_port         = 3000
+
+```
+
 Para executar o código e gerar a infraestrutura na AWS:
 
 - `terraform init` para instalar as dependencias do provider
